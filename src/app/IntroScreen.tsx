@@ -3,6 +3,7 @@ import { useGame } from '@/store/gameStore';
 import { useSettings } from '@/store/settingsStore';
 import { CASES } from '@/content/cases';
 import { Button } from '@/ui/Button';
+import { GenderPicker } from '@/ui/GenderPicker';
 import { AmbientBackground } from '@/ui/AmbientBackground';
 
 /** Opening page outside the phone. Phase 4 adds the animated background and Lenis. */
@@ -63,6 +64,7 @@ export function IntroScreen() {
           );
         })}
       </div>
+      <GenderPicker />
       <Button size="lg" onClick={() => startCase(CASES[0].id)} data-testid="start-game">
         {t('app.start')}
       </Button>

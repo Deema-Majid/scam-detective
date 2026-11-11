@@ -621,5 +621,8 @@
   "family.habit.title": "The habit: the other channel",
   "family.habit.body": "Never verify through the channel the message came from. Open the official app yourself, call a saved number or the one printed on your card, or type the website address yourself.",
   "family.footer": "Educational game: every name and number is fictional. Message Detective is built by Deema Majid AlMaarik.",
-  "family.print": "Print the card"
+  "family.print": "Print the card",
+  "gender.label": "I am:",
+  "gender.f": "Girl",
+  "gender.m": "Boy"
 }

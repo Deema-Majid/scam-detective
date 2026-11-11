@@ -3,6 +3,7 @@ import { isValidTesterCode, normalizeTesterCode } from '@/engine/abAssign';
 import { useT } from '@/i18n/useT';
 import { useGame, type AgeBand } from '@/store/gameStore';
 import { Button } from '@/ui/Button';
+import { GenderPicker } from '@/ui/GenderPicker';
 
 const AGES: AgeBand[] = ['13-15', '16-18', '19+'];
 
@@ -73,6 +74,7 @@ export function TesterCodeScreen() {
       >
         {t('common.next')}
       </Button>
+      <GenderPicker />
       <p className="text-xs text-fg-faint">{t('tester.code.privacy')}</p>
     </main>
   );
