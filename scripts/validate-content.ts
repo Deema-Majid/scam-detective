@@ -14,6 +14,7 @@ import { join } from 'node:path';
 import { CASES as REGISTERED } from '../src/content/cases';
 import { case2 } from '../src/content/cases/case2';
 import { case3 } from '../src/content/cases/case3';
+import { case4 } from '../src/content/cases/case4';
 import { TEST_BANK } from '../src/content/test-bank';
 import { TECHNIQUES } from '../src/content/techniques';
 import ar from '../src/i18n/ar.json';
@@ -25,14 +26,18 @@ import type { Case } from '../src/engine/types';
 const requireEn = process.argv.includes('--require-en') || process.env.REQUIRE_EN === '1';
 /** --drafts: also validate unregistered cases with their draft strings (docs/content-drafts). */
 const withDrafts = process.argv.includes('--drafts');
-const CASES = withDrafts ? [...REGISTERED, ...[case2, case3].filter((c) => !REGISTERED.some((r) => r.id === c.id))] : REGISTERED;
+const CASES = withDrafts ? [...REGISTERED, ...[case2, case3, case4].filter((c) => !REGISTERED.some((r) => r.id === c.id))] : REGISTERED;
 const errors: string[] = [];
 const warnings: string[] = [];
 const fail = (m: string) => errors.push(m);
 const warn = (m: string) => warnings.push(m);
 
 const arDict: Record<string, string> = withDrafts
-  ? { ...(JSON.parse(readFileSync('docs/content-drafts/cases-2-3.ar.json', 'utf8')) as Record<string, string>), ...(ar as Record<string, string>) }
+  ? {
+      ...(JSON.parse(readFileSync('docs/content-drafts/cases-2-3.ar.json', 'utf8')) as Record<string, string>),
+      ...(JSON.parse(readFileSync('docs/content-drafts/case4.ar.json', 'utf8')) as Record<string, string>),
+      ...(ar as Record<string, string>),
+    }
   : (ar as Record<string, string>);
 const enDict = en as Record<string, string>;
 const usedKeys = new Set<string>();
@@ -136,7 +141,9 @@ for (const c of CASES) {
     key(e.titleKey, `${where} ${e.id}`);
     key(e.bodyKey, `${where} ${e.id}`);
     if (!c.tools.includes(e.tool)) fail(`${where}: evidence ${e.id} uses tool "${e.tool}" not listed in case.tools`);
-    if (e.supports === c.truth && !e.misleading && !(e.techniques?.length)) fail(`${where}: evidence ${e.id} supports the truth but reveals no technique`);
+    // Scam cases: every honest piece of evidence must expose a technique. Legit cases have no scammer tricks.
+    if (c.truth === 'scam' && e.supports === c.truth && !e.misleading && !(e.techniques?.length)) fail(`${where}: evidence ${e.id} supports the truth but reveals no technique`);
+    if (c.truth === 'legit' && (e.techniques?.length ?? 0) > 0) fail(`${where}: legit case evidence ${e.id} must not list scam techniques`);
     for (const t of e.techniques ?? []) if (!(t in TECHNIQUES)) fail(`${where}: evidence ${e.id} has unknown technique ${t}`);
   }
 
@@ -176,6 +183,9 @@ for (const c of CASES) {
     key(c.interrupt.message.timeKey, `${where} interrupt`);
     if (c.interrupt.relevant && !(c.interrupt.evidence?.length || c.interrupt.message.evidence?.length)) fail(`${where}: relevant interrupt offers no evidence`);
   }
+
+  if (c.truth === 'legit' && !c.evidence.some((e) => e.misleading && e.supports === 'scam')) fail(`${where}: a legit case needs misleading evidence that points to a scam`);
+  if (c.truth === 'legit' && c.techniques.length > 0) fail(`${where}: a legit case must have an empty techniques list`);
 
   // Decisions
   const best = c.decisions.filter((d) => d.rating === 'best');

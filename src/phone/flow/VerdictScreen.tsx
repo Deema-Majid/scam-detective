@@ -49,7 +49,7 @@ export function VerdictScreen() {
           {stamping ? <Stamp truth={truth} animate /> : <Stamp truth={truth} ghost />}
         </div>
       )}
-      <div className="phone-scroll relative z-10 flex-1 px-4 py-4">
+      <div className="phone-scroll relative z-10 flex-1 px-4 py-4" role="region" tabIndex={0} aria-label={t('phone.scrollRegion')}>
         <h3 className="mb-3 text-lg font-bold leading-snug">{t('verdict.question')}</h3>
         <div className="mb-5 grid grid-cols-2 gap-3">
           <VerdictCard kind="scam" selected={truth === 'scam'} onClick={() => setTruth('scam')} />

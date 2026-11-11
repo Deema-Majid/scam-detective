@@ -191,7 +191,7 @@ export function NotebookApp() {
         {status?.text}
       </div>
 
-      <div className="paper phone-scroll flex-1" data-testid="notebook-paper">
+      <div className="paper phone-scroll flex-1" role="region" tabIndex={0} aria-label={t('phone.scrollRegion')} data-testid="notebook-paper">
         <div ref={wrapRef} className="relative px-5 pb-6 pt-5">
           {/* Ink lines live inside the scrolling wrapper so they stay glued to the cards. */}
           <svg className="pointer-events-none absolute inset-0 h-full w-full overflow-visible" aria-hidden data-testid="ink-lines">

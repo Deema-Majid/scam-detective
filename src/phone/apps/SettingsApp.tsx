@@ -17,7 +17,7 @@ export function SettingsApp() {
   return (
     <div className="flex min-h-0 flex-1 flex-col" data-testid="settings">
       <AppHeader title={t('settings.title')} onBack={home} />
-      <div className="phone-scroll flex-1 px-4 py-4">
+      <div className="phone-scroll flex-1 px-4 py-4" role="region" tabIndex={0} aria-label={t('phone.scrollRegion')}>
         <SettingsGroup title={t('settings.group.appearance')}>
           <SettingsRow icon={s.theme === 'dark' ? <IconMoon /> : <IconSun />} title={t('settings.theme')} desc={t('settings.theme.desc')}>
             <Segmented

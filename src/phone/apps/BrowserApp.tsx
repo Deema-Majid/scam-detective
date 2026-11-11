@@ -38,7 +38,7 @@ export function BrowserApp() {
       <div className="flex min-h-0 flex-1 flex-col" data-testid="browser">
         <AppHeader title={t('browser.title')} onBack={home} />
         <AddressBar text={t('browser.startPage')} kind="start" />
-        <div className="phone-scroll flex-1 px-4 py-4">
+        <div className="phone-scroll flex-1 px-4 py-4" role="region" tabIndex={0} aria-label={t('phone.scrollRegion')}>
           <h3 className="mb-2 text-sm font-semibold text-fg-muted">{t('browser.bookmarks')}</h3>
           <ul className="grid gap-2">
             {c.world.sites
@@ -77,7 +77,7 @@ export function BrowserApp() {
     <div className="flex min-h-0 flex-1 flex-col" data-testid={`site-${current.id}`}>
       <AppHeader title={t(current.nameKey)} onBack={back} />
       <AddressBar text={`${current.domain}${page.path === '/' ? '' : page.path}`} kind={current.official ? 'official' : 'sim'} />
-      <div className="phone-scroll flex-1">
+      <div className="phone-scroll flex-1" role="region" tabIndex={0} aria-label={t('phone.scrollRegion')}>
         <SitePageView site={current} page={page} />
       </div>
     </div>

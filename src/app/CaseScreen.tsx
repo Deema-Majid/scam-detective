@@ -53,7 +53,8 @@ export function CaseScreen() {
   const caseIndex = caseOrder.indexOf(w.c.id);
 
   return (
-    <div data-case={w.c.id} className="relative flex min-h-dvh flex-col items-center justify-center gap-6 sm:py-4">
+    <main id="main" data-case={w.c.id} className="relative flex min-h-dvh flex-col items-center justify-center gap-6 sm:py-4">
+      <h1 className="sr-only">{t(w.c.titleKey)}</h1>
       {mode === 'family' && (
         <Button variant="secondary" size="sm" className="fixed end-2 top-1 z-40 !min-h-9 sm:hidden" onClick={exitFamily} data-testid="family-exit-mobile">
           {t('family.exit')}
@@ -71,7 +72,7 @@ export function CaseScreen() {
         <PhoneScreen />
       </PhoneFrame>
       <p className="hidden max-w-sm text-center text-sm text-fg-muted sm:block">{t('case.investigate')}</p>
-    </div>
+    </main>
   );
 }
 

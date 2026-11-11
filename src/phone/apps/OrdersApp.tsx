@@ -52,7 +52,7 @@ export function OrdersApp() {
           </button>
         ))}
       </div>
-      <div className="phone-scroll flex-1 px-4 py-3">
+      <div className="phone-scroll flex-1 px-4 py-3" role="region" tabIndex={0} aria-label={t('phone.scrollRegion')}>
         {tab === 'orders' ? (
           <ul className="grid gap-3">
             {c.world.orders.map((o) => (
@@ -120,7 +120,7 @@ function OrderDetails({ order, onBack }: { order: Order; onBack: () => void }) {
   return (
     <div className="flex min-h-0 flex-1 flex-col" data-testid="order-details">
       <AppHeader title={t('orders.details')} onBack={onBack} />
-      <div className="phone-scroll flex-1 px-4 py-4">
+      <div className="phone-scroll flex-1 px-4 py-4" role="region" tabIndex={0} aria-label={t('phone.scrollRegion')}>
         <div className="mb-4 flex items-center gap-3">
           <span className="flex h-16 w-16 items-center justify-center rounded-2xl bg-surface-2 text-fg-muted" aria-hidden>
             <svg viewBox="0 0 24 24" className="h-8 w-8" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">

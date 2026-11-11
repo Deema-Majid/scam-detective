@@ -25,6 +25,29 @@ export function DialerApp() {
   const openCall = usePhone((s) => s.openCall);
   const visitedSites = usePhone((s) => s.visitedSites);
   const [typed, setTyped] = useState('');
+  const sheetOpen = usePhone((s) => s.sheet !== null);
+
+  // Physical keyboard: digits type, Backspace deletes, Enter calls (same rules as the on-screen keypad).
+  useEffect(() => {
+    if (callNumber || sheetOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.ctrlKey || e.metaKey || e.altKey) return;
+      const el = e.target as HTMLElement | null;
+      if (el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.isContentEditable)) return;
+      if (e.key.length === 1 && /[0-9*#]/.test(e.key)) {
+        setTyped((s) => (s.length < 14 ? s + e.key : s));
+      } else if (e.key === 'Backspace') {
+        setTyped((s) => s.slice(0, -1));
+      } else if (e.key === 'Enter') {
+        // Enter on a focused button/link keeps its own meaning.
+        if (el && (el.tagName === 'BUTTON' || el.tagName === 'A')) return;
+        if (norm(typed).length >= 3) openCall(typed);
+      }
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [callNumber, sheetOpen, typed, openCall]);
+
   if (!w) return null;
   const { c } = w;
 
@@ -41,7 +64,7 @@ export function DialerApp() {
   return (
     <div className="flex min-h-0 flex-1 flex-col" data-testid="dialer">
       <AppHeader title={t('dialer.title')} onBack={home} />
-      <div className="phone-scroll flex-1 px-4 py-3">
+      <div className="phone-scroll flex-1 px-4 py-3" role="region" tabIndex={0} aria-label={t('phone.scrollRegion')}>
         {saved.length > 0 && (
           <Section title={t('dialer.contacts')}>
             {saved.map((ct) => (
@@ -180,7 +203,7 @@ function CallScreen({ number }: { number: string }) {
           {done && !script ? t('dialer.noAnswer') : t('dialer.connected')} · <bdi>{clock}</bdi>
         </div>
       </div>
-      <div className="phone-scroll flex flex-1 flex-col gap-2 px-4 py-2" aria-live="polite">
+      <div className="phone-scroll flex flex-1 flex-col gap-2 px-4 py-2" role="region" tabIndex={0} aria-label={t('phone.scrollRegion')} aria-live="polite">
         {script?.risky && (
           <p className="rounded-xl bg-warn-soft px-3 py-2 text-xs text-fg" data-testid="risky-note">
             {t('dialer.riskyNote')}

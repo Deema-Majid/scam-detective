@@ -19,7 +19,27 @@ export function translate(
   vars?: Record<string, string | number>,
 ): string {
   const raw = dictionaries[lang][key] ?? dictionaries.ar[key] ?? key;
-  return interpolate(resolveGender(raw, gender), vars);
+  const text = interpolate(resolveGender(raw, gender), vars);
+  return lang === 'ar' ? isolateNumbers(text) : text;
+}
+
+const LRI = '⁦';
+const PDI = '⁩';
+const URL_SPLIT = /(https?:\/\/[^\s]+)/g;
+/** Mobile numbers (05 0000 0011), official lines (9200 00011) and amounts with thousands separators (2,300). */
+const NUMBER_RUN = /(?<![\d,])(?:0\d ?\d{4} ?\d{4}|9200 ?\d{5}|\d{1,3}(?:,\d{3})+)(?![\d,])/g;
+
+/**
+ * Arabic text reverses multi-part numbers ("05 0000 0011" shows as "0011 0000 05").
+ * Wrap them in invisible left-to-right isolates. URLs are left untouched on
+ * purpose: message links are detected by their exact text (MessageBubble) and
+ * are already rendered inside <bdi>.
+ */
+export function isolateNumbers(text: string): string {
+  return text
+    .split(URL_SPLIT)
+    .map((part, i) => (i % 2 === 1 ? part : part.replace(NUMBER_RUN, (m) => `${LRI}${m}${PDI}`)))
+    .join('');
 }
 
 export function hasKey(lang: Lang, key: string): boolean {

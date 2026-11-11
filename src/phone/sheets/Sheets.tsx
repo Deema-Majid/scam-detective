@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { useEffect, useRef, type ReactNode } from 'react';
 import type { Link } from '@/engine/types';
 import { useT } from '@/i18n/useT';
 import { usePhone, type Sheet } from '@/store/phoneStore';
@@ -8,19 +8,93 @@ import { Avatar } from '../Avatar';
 import { contactOf, useCaseWorld } from '../useCaseWorld';
 import { Button } from '@/ui/Button';
 
+const FOCUSABLE = 'a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])';
+
 /** Bottom sheet container. One sheet at a time; Escape or the scrim closes it. */
 export function SheetHost() {
   const sheet = usePhone((s) => s.sheet);
-  const close = usePhone((s) => s.closeSheet);
   if (!sheet) return null;
+  return <SheetDialog sheet={sheet} />;
+}
+
+/**
+ * Mounted only while a sheet is open. On open it remembers the opener and moves
+ * focus into the sheet; Tab wraps inside it; the rest of the phone is inert;
+ * Escape closes and focus returns to the opener.
+ */
+function SheetDialog({ sheet }: { sheet: NonNullable<Sheet> }) {
+  const close = usePhone((s) => s.closeSheet);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const opener = document.activeElement as HTMLElement | null;
+    const root = rootRef.current;
+    const dialog = dialogRef.current;
+    // Everything else inside the phone is inert while the sheet is open (live regions such as the toast stay readable).
+    const inerted: Element[] = [];
+    if (root?.parentElement) {
+      for (const el of Array.from(root.parentElement.children)) {
+        if (el === root || el.hasAttribute('aria-live') || el.querySelector('[aria-live]')) continue;
+        el.setAttribute('inert', '');
+        inerted.push(el);
+      }
+    }
+    dialog?.focus();
+
+    const onKey = (e: KeyboardEvent) => {
+      if (!dialog) return;
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        close();
+        return;
+      }
+      if (e.key !== 'Tab') return;
+      const items = Array.from(dialog.querySelectorAll<HTMLElement>(FOCUSABLE));
+      if (items.length === 0) {
+        e.preventDefault();
+        dialog.focus();
+        return;
+      }
+      const first = items[0];
+      const last = items[items.length - 1];
+      const active = document.activeElement;
+      if (!dialog.contains(active) || active === dialog) {
+        e.preventDefault();
+        (e.shiftKey ? last : first).focus();
+      } else if (e.shiftKey && active === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && active === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+    // If the focused button disables itself (e.g. "add to notebook"), focus falls to body: bring it back.
+    const onFocusOut = () => {
+      setTimeout(() => {
+        if (dialog && dialog.isConnected && !dialog.contains(document.activeElement)) dialog.focus();
+      }, 0);
+    };
+    document.addEventListener('keydown', onKey);
+    dialog?.addEventListener('focusout', onFocusOut);
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      dialog?.removeEventListener('focusout', onFocusOut);
+      inerted.forEach((el) => el.removeAttribute('inert'));
+      if (opener && opener.isConnected) opener.focus();
+    };
+  }, [close]);
+
   return (
-    <div className="absolute inset-0 z-20 flex flex-col justify-end" data-testid="sheet">
+    <div ref={rootRef} className="absolute inset-0 z-20 flex flex-col justify-end" data-testid="sheet">
       <button type="button" aria-label="close" className="absolute inset-0 bg-black/50" onClick={close} tabIndex={-1} />
       <div
+        ref={dialogRef}
         role="dialog"
         aria-modal="true"
-        className="relative max-h-[85%] overflow-y-auto rounded-t-[28px] border-t border-border bg-bg-elev px-4 pb-6 pt-3 shadow-2xl animate-[sheet-in_260ms_ease-out]"
-        onKeyDown={(e) => e.key === 'Escape' && close()}
+        tabIndex={-1}
+        className="relative max-h-[85%] overflow-y-auto rounded-t-[28px] border-t border-border bg-bg-elev px-4 pb-6 pt-3 shadow-2xl outline-none animate-[sheet-in_260ms_ease-out]"
       >
         <div className="mx-auto mb-3 h-1.5 w-12 rounded-full bg-fg/25" aria-hidden />
         <SheetBody sheet={sheet} />

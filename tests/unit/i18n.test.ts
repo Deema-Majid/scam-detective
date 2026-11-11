@@ -49,3 +49,22 @@ describe('A/B assignment by tester code', () => {
     expect(isValidTesterCode('hello')).toBe(false);
   });
 });
+
+describe('number isolation in Arabic text', () => {
+  const LRI = '\u2066';
+  const PDI = '\u2069';
+  it('wraps phone numbers, official lines and thousands amounts', async () => {
+    const { isolateNumbers } = await import('../../src/i18n');
+    expect(isolateNumbers('من رقم (05 0000 0011) لا')).toBe(`من رقم (${LRI}05 0000 0011${PDI}) لا`);
+    expect(isolateNumbers('اتصل 9200 00011 الآن')).toBe(`اتصل ${LRI}9200 00011${PDI} الآن`);
+    expect(isolateNumbers('خسرتِ 2,300 ريال')).toBe(`خسرتِ ${LRI}2,300${PDI} ريال`);
+  });
+  it('leaves URLs, plain numbers and English untouched', async () => {
+    const { isolateNumbers, translate } = await import('../../src/i18n');
+    const url = 'https://rafeef-express-pay.example/f/7XQ2';
+    expect(isolateNumbers(`سدّد من هنا: ${url}`)).toBe(`سدّد من هنا: ${url}`);
+    expect(isolateNumbers('18 ريال و70%')).toBe('18 ريال و70%');
+    expect(translate('en', 'f', 'case1.E1.body')).not.toContain(LRI);
+    expect(translate('ar', 'f', 'case1.msg.rafeef1')).toContain(url);
+  });
+});

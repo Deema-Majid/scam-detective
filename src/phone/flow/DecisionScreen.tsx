@@ -31,7 +31,7 @@ export function DecisionScreen() {
     return (
       <div className="flex min-h-0 flex-1 flex-col" data-testid="verdict-result">
         <FlowHeader title={t('verdict.title')} step={t('flow.step', { n: 1, total: 4 })} />
-        <div className="phone-scroll flex flex-1 flex-col items-center px-4 py-6 text-center">
+        <div className="phone-scroll flex flex-1 flex-col items-center px-4 py-6 text-center" role="region" tabIndex={0} aria-label={t('phone.scrollRegion')}>
           <Stamp truth={verdict.truth} />
           <h3 className={`mt-6 text-lg font-bold ${res.outcome === 'wrong' ? 'text-scam' : 'text-legit'}`} data-testid={`verdict-outcome-${res.outcome}`}>
             {t(`verdict.result.${res.outcome}`)}
@@ -55,7 +55,7 @@ export function DecisionScreen() {
   return (
     <div className="flex min-h-0 flex-1 flex-col" data-testid="decision-screen">
       <FlowHeader title={t('decision.heading')} step={t('flow.step', { n: 2, total: 4 })} />
-      <div className="phone-scroll flex-1 px-4 py-4">
+      <div className="phone-scroll flex-1 px-4 py-4" role="region" tabIndex={0} aria-label={t('phone.scrollRegion')}>
         <p className="mb-3 flex items-center gap-2 text-sm text-fg-muted">
           <span className={`inline-flex items-center rounded border px-1.5 text-xs font-bold ${verdict.truth === 'scam' ? 'border-scam text-scam' : 'border-legit text-legit'}`} style={{ transform: 'rotate(-6deg)' }} aria-hidden>
             {t(verdict.truth === 'scam' ? 'verdict.scam' : 'verdict.legit')}

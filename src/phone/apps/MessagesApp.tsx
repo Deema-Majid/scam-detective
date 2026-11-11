@@ -27,7 +27,7 @@ export function MessagesApp({ app = 'messages' }: { app?: 'messages' | 'chats' }
     return (
       <div className="flex min-h-0 flex-1 flex-col" data-testid={`${app}-list`}>
         <AppHeader title={t(app === 'messages' ? 'messages.title' : 'chats.title')} onBack={home} />
-        <ul className="phone-scroll flex-1 divide-y divide-border">
+        <ul className="phone-scroll flex-1 divide-y divide-border" tabIndex={0} aria-label={t('phone.scrollRegion')}>
           {threads.map((th) => (
             <ThreadRow key={th.id} thread={th} onOpen={() => openThread(th.id)} />
           ))}
@@ -65,7 +65,7 @@ export function MessagesApp({ app = 'messages' }: { app?: 'messages' | 'chats' }
           </button>
         }
       />
-      <div className="phone-scroll flex flex-1 flex-col gap-3 px-3 py-4">
+      <div className="phone-scroll flex flex-1 flex-col gap-3 px-3 py-4" role="region" tabIndex={0} aria-label={t('phone.scrollRegion')}>
         {messages.map((m) => (
           <MessageBubble key={m.id} thread={thread} message={m} />
         ))}

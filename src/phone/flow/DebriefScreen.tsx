@@ -16,7 +16,8 @@ import { IconExit } from '@/ui/Icons';
  * judgements so far, the other-channel counter, then the next case.
  */
 export function DebriefScreen() {
-  const { t } = useT();
+  const { t, lang } = useT();
+  const sep = lang === 'ar' ? '، ' : ', ';
   const w = useCaseWorld();
   const state = useGame();
   const nextCase = useGame((s) => s.nextCase);
@@ -43,7 +44,7 @@ export function DebriefScreen() {
   return (
     <div className="flex min-h-0 flex-1 flex-col" data-testid="debrief-screen">
       <FlowHeader title={t('debrief.title')} step={t('flow.step', { n: 4, total: 4 })} />
-      <div className="phone-scroll flex-1 px-4 py-4">
+      <div className="phone-scroll flex-1 px-4 py-4" role="region" tabIndex={0} aria-label={t('phone.scrollRegion')}>
         <p className="mb-4 rounded-2xl bg-surface-2 p-3 text-sm leading-relaxed">{t(c.planKey)}</p>
 
         <h3 className="mb-2 text-sm font-bold text-accent-ink">{t('debrief.techniques')}</h3>
@@ -58,7 +59,7 @@ export function DebriefScreen() {
                   {t(TECHNIQUES[tech].nameKey)}
                 </div>
                 <p className="text-sm text-fg-muted">{t(TECHNIQUES[tech].descKey)}</p>
-                <p className="mt-1 text-xs">{names.length ? t('debrief.revealedBy', { evidence: names.join('، ') }) : <span className="text-fg-faint">{t('debrief.notRevealed')}</span>}</p>
+                <p className="mt-1 text-xs">{names.length ? t('debrief.revealedBy', { evidence: names.join(sep) }) : <span className="text-fg-faint">{t('debrief.notRevealed')}</span>}</p>
               </li>
             );
           })}
@@ -96,7 +97,7 @@ export function DebriefScreen() {
         </ul>
         {repeated.length > 0 && (
           <p className="-mt-3 mb-5 text-xs text-accent-ink" data-testid="map-repeat">
-            {t('debrief.mapRepeat')}: {repeated.map((x) => t(TECHNIQUES[x].nameKey)).join('، ')}
+            {t('debrief.mapRepeat')}: {repeated.map((x) => t(TECHNIQUES[x].nameKey)).join(sep)}
           </p>
         )}
 

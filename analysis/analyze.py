@@ -69,6 +69,24 @@ def load_results(folder: Path) -> list[dict]:
     return out
 
 
+def dedupe_by_tester(results: list[dict]) -> tuple[list[dict], int]:
+    """Keep the record with the latest finishedAt per tester code.
+
+    Records without a tester code are never merged. Ties keep the later-read record.
+    """
+    best: dict[str, int] = {}
+    for i, r in enumerate(results):
+        t = r.get("tester")
+        if not t:
+            continue
+        key = str(t).strip().upper()
+        if key not in best or str(r.get("finishedAt", "")) >= str(results[best[key]].get("finishedAt", "")):
+            best[key] = i
+    keep = {i for i in best.values()}
+    kept = [r for i, r in enumerate(results) if not r.get("tester") or i in keep]
+    return kept, len(results) - len(kept)
+
+
 def metrics(items: list[dict]) -> dict:
     if not items:
         return {}
@@ -178,10 +196,11 @@ def fmt_p(r: dict) -> str:
     return f"{r['p']:.3f}" + (f" ({r['note']})" if r["note"] else "")
 
 
-def write_summary(df: pd.DataFrame, out: Path, n_total: int, n_synth: int):
+def write_summary(df: pd.DataFrame, out: Path, n_total: int, n_synth: int, n_dupes: int = 0):
     lines = ["# Pre/post results summary", ""]
     if n_synth:
         lines += [f"> **{n_synth} of {n_total} records are synthetic sample data, not real testers.** Do not report these numbers.", ""]
+    lines += [f"{n_dupes} duplicate records removed.", ""]
     lines += [f"Testers read: **{n_total}**. Testers with both tests complete: **{int(df[['pre_accuracy', 'post_accuracy']].dropna().shape[0]) if {'pre_accuracy', 'post_accuracy'} <= set(df.columns) else 0}**.", ""]
     lines += ["| Metric | n (paired) | Before | After | Change | Wilcoxon signed-rank p |", "|---|---|---|---|---|---|"]
     for m, label in [("accuracy", "Accuracy"), ("brier", "Brier score (lower is better)"), ("other_channel", "Chose 'another channel' first"), ("acc_polished", "Accuracy, polished messages"), ("acc_sloppy", "Accuracy, sloppy messages")]:
@@ -202,12 +221,13 @@ def main():
     results = load_results(folder)
     if not results:
         sys.exit(f"No results found in {folder}")
+    results, n_dupes = dedupe_by_tester(results)
     df = build_table(results)
     df.to_csv(out / "metrics.csv", index=False)
     plot_pre_post(df, out / "pre_post.png")
     plot_polished(df, out / "polished_sloppy.png")
-    write_summary(df, out / "summary.md", len(results), int(df["synthetic"].sum()))
-    print(f"Read {len(results)} results -> {out}/ (summary.md, pre_post.png, polished_sloppy.png, metrics.csv)")
+    write_summary(df, out / "summary.md", len(results), int(df["synthetic"].sum()), n_dupes)
+    print(f"Read {len(results)} results ({n_dupes} duplicate records removed) -> {out}/ (summary.md, pre_post.png, polished_sloppy.png, metrics.csv)")
 
 
 if __name__ == "__main__":

@@ -46,7 +46,7 @@ export function OutcomeScreen() {
   return (
     <div className="flex min-h-0 flex-1 flex-col" data-testid="outcome-screen">
       <FlowHeader title={t('outcome.title')} step={t('flow.step', { n: 3, total: 4 })} />
-      <div className="phone-scroll flex-1 px-4 py-4">
+      <div className="phone-scroll flex-1 px-4 py-4" role="region" tabIndex={0} aria-label={t('phone.scrollRegion')}>
         <div className={`mb-4 flex items-center gap-2 text-lg font-bold ${RATING_TONE[d.rating]}`} data-testid={`outcome-rating-${d.rating}`}>
           {d.rating === 'harmful' || d.rating === 'risky' ? <IconWarning className="h-6 w-6" /> : <IconShield className="h-6 w-6" />}
           {t(`outcome.rating.${d.rating}`)}
@@ -60,7 +60,15 @@ export function OutcomeScreen() {
         )}
 
         <div className="mb-5 grid grid-cols-3 gap-2" data-testid="effects">
-          <EffectCard label={t('outcome.balance')} value={<bdi className={money < 0 ? 'text-scam' : ''}>{money < 0 ? `−${fmt(-money)}` : fmt(balance)} {t('common.sar')}</bdi>} note={money < 0 ? t('outcome.loss') : t('outcome.noLoss')} />
+          <EffectCard
+            label={`${t('outcome.balance')} (${t('common.sar')})`}
+            value={
+              <bdi dir="ltr" className={money < 0 ? 'text-scam' : ''} data-testid="balance-flow" aria-label={`${t('outcome.balanceBefore')} ${fmt(START_BALANCE)} ${t('outcome.balanceAfter')} ${fmt(balance)}`}>
+                {fmt(START_BALANCE)} → {fmt(balance)}
+              </bdi>
+            }
+            note={`${t('outcome.balanceChange')}: ${money < 0 ? `−${fmt(-money)}` : money > 0 ? `+${fmt(money)}` : '0'} · ${money < 0 ? t('outcome.loss') : t('outcome.noLoss')}`}
+          />
           <EffectCard label={t('outcome.exposure')} value={t(`outcome.exposure.${d.effects.exposure ?? 'none'}`)} tone={d.effects.exposure && d.effects.exposure !== 'none' ? 'text-scam' : ''} />
           <EffectCard label={t('outcome.trust')} value={t('verdict.mirror', { conf: Math.round(verdict.confidence * 100), acc: t(res.correct ? 'verdict.mirror.correct' : 'verdict.mirror.wrong') })} small />
         </div>
