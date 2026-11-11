@@ -26,14 +26,16 @@ export function ConfidenceSlider({ value, onChange, testid = 'confidence' }: { v
         step={5}
         value={value}
         onChange={(e) => onChange(Number(e.target.value))}
+        dir="ltr"
         className="confidence-slider"
         style={{ ['--fill' as string]: `${fill}%` }}
         aria-valuetext={t('verdict.confidenceText', { n: value })}
         data-testid={testid}
       />
-      <div className="flex justify-between text-xs text-fg-muted">
-        <span>{t('verdict.confidence.min')}</span>
-        <span>{t('verdict.confidence.max')}</span>
+      {/* The track is always left-to-right (right = more confident), in Arabic too. */}
+      <div className="flex justify-between text-xs text-fg-muted" dir="ltr">
+        <span dir="auto">{t('verdict.confidence.min')}</span>
+        <span dir="auto">{t('verdict.confidence.max')}</span>
       </div>
     </div>
   );
