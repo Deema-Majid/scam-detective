@@ -71,6 +71,10 @@ export type GameState = {
   goToDebrief: () => void;
   nextCase: () => void;
   resetAll: () => void;
+  /** Make the mode follow the URL; a different saved mode starts a clean session. */
+  syncModeWithUrl: (search: string) => void;
+  /** Leave family mode: clean normal session and drop ?mode=family from the URL. */
+  exitFamily: () => void;
 };
 
 const currentRun = (s: GameState): CaseRun | undefined => (s.currentCaseId ? s.runs[s.currentCaseId] : undefined);
@@ -229,6 +233,35 @@ export const useGame = create<GameState>()(
           techniqueMap: {},
           altTimelinesUnlocked: false,
         }),
+      syncModeWithUrl: (search) => {
+        const q = new URLSearchParams(search);
+        const s = get();
+        if (q.get('tester') === '1') {
+          if (s.mode !== 'tester') {
+            get().resetAll();
+            get().setMode('tester');
+          }
+        } else if (q.get('mode') === 'family') {
+          const id = CASES.some((c) => c.id === q.get('case')) ? (q.get('case') as string) : CASES[0].id;
+          if (s.mode !== 'family' || s.caseOrder.length !== 1 || s.caseOrder[0] !== id) {
+            get().resetAll();
+            get().setMode('family', [id]);
+            get().startCase(id);
+          }
+        } else if (s.mode !== 'normal') {
+          get().resetAll();
+        }
+      },
+      exitFamily: () => {
+        get().resetAll();
+        if (typeof window !== 'undefined' && window.history?.replaceState) {
+          const q = new URLSearchParams(window.location.search);
+          q.delete('mode');
+          q.delete('case');
+          const qs = q.toString();
+          window.history.replaceState(null, '', window.location.pathname + (qs ? `?${qs}` : '') + window.location.hash);
+        }
+      },
     }),
     { name: 'sd-game', version: 1 },
   ),

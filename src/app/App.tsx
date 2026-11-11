@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { useGame, type Screen as ScreenId } from '@/store/gameStore';
 import { useT } from '@/i18n/useT';
-import { CASES } from '@/content/cases';
 import { IntroScreen } from './IntroScreen';
 import { CaseScreen } from './CaseScreen';
 import { SummaryScreen } from './SummaryScreen';
@@ -20,20 +19,14 @@ import { FamilyCardScreen } from './FamilyCardScreen';
  */
 export function App() {
   const screen = useGame((s) => s.screen);
-  const setMode = useGame((s) => s.setMode);
-  const startCase = useGame((s) => s.startCase);
-  const mode = useGame((s) => s.mode);
+  const syncModeWithUrl = useGame((s) => s.syncModeWithUrl);
   const { t } = useT();
 
+  // The URL decides the mode on every load. A different saved mode means a
+  // clean new session; the same mode resumes where the player was.
   useEffect(() => {
-    const q = new URLSearchParams(window.location.search);
-    if (q.get('tester') === '1' && mode !== 'tester') setMode('tester');
-    if (q.get('mode') === 'family' && mode !== 'family') {
-      const id = CASES.some((c) => c.id === q.get('case')) ? (q.get('case') as string) : CASES[0].id;
-      setMode('family', [id]);
-      startCase(id);
-    }
-  }, [mode, setMode, startCase]);
+    syncModeWithUrl(window.location.search);
+  }, [syncModeWithUrl]);
 
   return (
     <>

@@ -17,7 +17,7 @@ export function FamilyCardScreen() {
   const mode = useGame((s) => s.mode);
   const caseOrder = useGame((s) => s.caseOrder);
   const setScreen = useGame((s) => s.setScreen);
-  const resetAll = useGame((s) => s.resetAll);
+  const exitFamily = useGame((s) => s.exitFamily);
   const cases = mode === 'family' ? CASES.filter((c) => caseOrder.includes(c.id)) : CASES;
 
   return (
@@ -65,8 +65,8 @@ export function FamilyCardScreen() {
         <Button
           variant="secondary"
           onClick={() => {
-            if (mode === 'family') resetAll();
-            setScreen('intro');
+            if (mode === 'family') exitFamily();
+            else setScreen('intro');
           }}
           data-testid="family-back"
         >

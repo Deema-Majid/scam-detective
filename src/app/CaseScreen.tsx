@@ -18,6 +18,7 @@ export function CaseScreen() {
   const w = useCaseWorld();
   const mode = useGame((s) => s.mode);
   const caseOrder = useGame((s) => s.caseOrder);
+  const exitFamily = useGame((s) => s.exitFamily);
   const startInvestigating = useGame((s) => s.startInvestigating);
   const showToast = usePhone((s) => s.showToast);
   const resetForCase = usePhone((s) => s.resetForCase);
@@ -53,6 +54,11 @@ export function CaseScreen() {
 
   return (
     <div data-case={w.c.id} className="relative flex min-h-dvh flex-col items-center justify-center gap-6 sm:py-4">
+      {mode === 'family' && (
+        <Button variant="secondary" size="sm" className="fixed end-2 top-1 z-40 !min-h-9 sm:hidden" onClick={exitFamily} data-testid="family-exit-mobile">
+          {t('family.exit')}
+        </Button>
+      )}
       {mode === 'tester' && <TesterProgress step={caseIndex + 1} total={caseOrder.length} />}
       <AmbientBackground />
       <CaseIntroCard />
@@ -104,6 +110,7 @@ function CaseIntroCard() {
   const w = useCaseWorld();
   const mode = useGame((s) => s.mode);
   const setScreen = useGame((s) => s.setScreen);
+  const exitFamily = useGame((s) => s.exitFamily);
   if (!w) return null;
   return (
     <div className="hidden w-[390px] items-center justify-between gap-3 rounded-2xl border border-border bg-surface px-4 py-3 sm:flex" data-testid="case-context">
@@ -113,8 +120,8 @@ function CaseIntroCard() {
         <div className="text-xs text-fg-faint">{t('case.evidenceCount', { n: w.run.collected.length, total: w.c.evidence.length })}</div>
       </div>
       {mode !== 'tester' && (
-        <Button variant="ghost" size="sm" onClick={() => setScreen('intro')}>
-          {t('common.back')}
+        <Button variant="ghost" size="sm" onClick={() => (mode === 'family' ? exitFamily() : setScreen('intro'))} data-testid={mode === 'family' ? 'family-exit' : 'case-back'}>
+          {mode === 'family' ? t('family.exit') : t('common.back')}
         </Button>
       )}
     </div>

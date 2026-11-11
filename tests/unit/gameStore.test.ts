@@ -38,3 +38,45 @@ describe('tester flow in the store', () => {
     expect(useGame.getState().screen).toBe('family-card');
   });
 });
+
+describe('mode follows the URL', () => {
+  beforeEach(() => mem.clear());
+
+  it('family saved, plain URL -> clean normal session', async () => {
+    const { useGame } = await import('../../src/store/gameStore');
+    useGame.getState().resetAll();
+    useGame.getState().syncModeWithUrl('?mode=family&case=case2');
+    expect(useGame.getState().mode).toBe('family');
+    expect(useGame.getState().screen).toBe('case');
+    expect(useGame.getState().currentCaseId).toBe('case2');
+    useGame.getState().syncModeWithUrl('');
+    const s = useGame.getState();
+    expect(s.mode).toBe('normal');
+    expect(s.screen).toBe('intro');
+    expect(s.currentCaseId).toBeUndefined();
+    expect(s.runs).toEqual({});
+  });
+
+  it('tester saved, plain URL -> clean normal session; same mode resumes', async () => {
+    const { useGame } = await import('../../src/store/gameStore');
+    useGame.getState().resetAll();
+    useGame.getState().syncModeWithUrl('?tester=1');
+    useGame.getState().setTester('T-0427');
+    useGame.getState().setScreen('consent');
+    useGame.getState().syncModeWithUrl('?tester=1');
+    expect(useGame.getState().screen).toBe('consent');
+    expect(useGame.getState().tester?.code).toBe('T-0427');
+    useGame.getState().syncModeWithUrl('');
+    expect(useGame.getState().mode).toBe('normal');
+    expect(useGame.getState().tester).toBeUndefined();
+    expect(useGame.getState().screen).toBe('intro');
+  });
+
+  it('exitFamily resets to normal intro', async () => {
+    const { useGame } = await import('../../src/store/gameStore');
+    useGame.getState().syncModeWithUrl('?mode=family&case=case1');
+    useGame.getState().exitFamily();
+    expect(useGame.getState().mode).toBe('normal');
+    expect(useGame.getState().screen).toBe('intro');
+  });
+});
