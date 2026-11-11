@@ -1,0 +1,171 @@
+{
+  "v": 1,
+  "synthetic": true,
+  "tester": "T-9002",
+  "age": "19+",
+  "lang": "ar",
+  "gender": "f",
+  "startedAt": 1794300000000,
+  "finishedAt": 1794301500000,
+  "pre": {
+    "form": "B",
+    "items": [
+      {
+        "id": "B1",
+        "truth": "scam",
+        "polished": true,
+        "verdict": "legit",
+        "confidence": 0.9,
+        "correct": false,
+        "brier": 0.81,
+        "firstAction": "B1.act3",
+        "otherChannel": true
+      },
+      {
+        "id": "B2",
+        "truth": "scam",
+        "polished": false,
+        "verdict": "scam",
+        "confidence": 1.0,
+        "correct": true,
+        "brier": 0.0,
+        "firstAction": "B2.act1",
+        "otherChannel": false
+      },
+      {
+        "id": "B3",
+        "truth": "scam",
+        "polished": false,
+        "verdict": "legit",
+        "confidence": 0.8,
+        "correct": false,
+        "brier": 0.64,
+        "firstAction": "B3.act1",
+        "otherChannel": false
+      },
+      {
+        "id": "B4",
+        "truth": "legit",
+        "polished": true,
+        "verdict": "legit",
+        "confidence": 0.7,
+        "correct": true,
+        "brier": 0.09,
+        "firstAction": "B4.act3",
+        "otherChannel": true
+      },
+      {
+        "id": "B5",
+        "truth": "legit",
+        "polished": true,
+        "verdict": "legit",
+        "confidence": 0.6,
+        "correct": true,
+        "brier": 0.16,
+        "firstAction": "B5.act3",
+        "otherChannel": true
+      },
+      {
+        "id": "B6",
+        "truth": "legit",
+        "polished": false,
+        "verdict": "legit",
+        "confidence": 0.8,
+        "correct": true,
+        "brier": 0.04,
+        "firstAction": "B6.act1",
+        "otherChannel": false
+      }
+    ]
+  },
+  "post": {
+    "form": "A",
+    "items": [
+      {
+        "id": "A1",
+        "truth": "scam",
+        "polished": true,
+        "verdict": "scam",
+        "confidence": 0.7,
+        "correct": true,
+        "brier": 0.09,
+        "firstAction": "A1.act1",
+        "otherChannel": false
+      },
+      {
+        "id": "A2",
+        "truth": "scam",
+        "polished": true,
+        "verdict": "scam",
+        "confidence": 0.9,
+        "correct": true,
+        "brier": 0.01,
+        "firstAction": "A2.act3",
+        "otherChannel": true
+      },
+      {
+        "id": "A3",
+        "truth": "scam",
+        "polished": false,
+        "verdict": "scam",
+        "confidence": 0.6,
+        "correct": true,
+        "brier": 0.16,
+        "firstAction": "A3.act1",
+        "otherChannel": false
+      },
+      {
+        "id": "A4",
+        "truth": "legit",
+        "polished": true,
+        "verdict": "legit",
+        "confidence": 1.0,
+        "correct": true,
+        "brier": 0.0,
+        "firstAction": "A4.act3",
+        "otherChannel": true
+      },
+      {
+        "id": "A5",
+        "truth": "legit",
+        "polished": false,
+        "verdict": "legit",
+        "confidence": 0.7,
+        "correct": true,
+        "brier": 0.09,
+        "firstAction": "A5.act3",
+        "otherChannel": true
+      },
+      {
+        "id": "A6",
+        "truth": "legit",
+        "polished": false,
+        "verdict": "legit",
+        "confidence": 0.8,
+        "correct": true,
+        "brier": 0.04,
+        "firstAction": "A6.act3",
+        "otherChannel": true
+      }
+    ]
+  },
+  "cases": [],
+  "summary": {
+    "otherChannelCount": 2,
+    "brierCases": 0.12
+  },
+  "feedback": {
+    "open": [
+      "synthetic",
+      "synthetic",
+      "synthetic"
+    ],
+    "likert": [
+      4,
+      4,
+      5,
+      4,
+      5
+    ]
+  }
+}

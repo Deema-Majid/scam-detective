@@ -1,0 +1,15 @@
+node_modules/
+dist/
+test-results/
+playwright-report/
+blob-report/
+tests/e2e/__screenshots__/**/*-actual.png
+analysis/output/
+analysis/.venv/
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db
+*.log
+analysis/data/
+test-results/
