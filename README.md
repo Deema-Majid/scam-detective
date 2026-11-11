@@ -1,4 +1,4 @@
-# لعبة الرسايل — Message Detective
+# خدعة؟ — Real or Ruse?
 
 **[العربية](#العربية) · [English](#english)**
 
@@ -46,7 +46,7 @@ npm run build          # النسخة النهائية في dist/
 
 ## English
 
-**Message Detective** is an interactive web game that trains people to spot scams by investigating, not guessing. The player receives messages on a simulated phone and uses in-game tools (sender and link inspection, the company's official site, order history, calling the official number, old chats) to collect evidence in a notebook, link it into deductions, prove a verdict, and choose a safe response, then sees the consequence. Everything is simulated: no real links, `.example` domains, fictional names. A built-in pre/post test and a confidence mirror (Brier score) measure learning with no server and no personal data.
+**Real or Ruse?** is an interactive web game that trains people to spot scams by investigating, not guessing. The player receives messages on a simulated phone and uses in-game tools (sender and link inspection, the company's official site, order history, calling the official number, old chats) to collect evidence in a notebook, link it into deductions, prove a verdict, and choose a safe response, then sees the consequence. Everything is simulated: no real links, `.example` domains, fictional names. A built-in pre/post test and a confidence mirror (Brier score) measure learning with no server and no personal data.
 
 Built by **Deema Majid AlMaarik**, a Saudi developer, for Technovation 2026–2027. All rights reserved.
 

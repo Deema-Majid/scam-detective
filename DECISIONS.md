@@ -4,7 +4,7 @@
 
 | # | القرار | الافتراضي الحالي | أين يتغيّر |
 |---|---|---|---|
-| 1 | اسم اللعبة | «لعبة الرسايل» عربيًا، «Message Detective» إنجليزيًا (مبدئي؛ الخطة تذكر Scam Detective) | `src/i18n/ar.json` و`en.json` مفتاح `app.name`، و`index.html` `<title>` |
+| 1 | اسم اللعبة | **اعتمدته ديما:** «خدعة؟» عربيًا، «Real or Ruse?» إنجليزيًا. فُحص بالبحث العام ولم يظهر تطابق؛ يُفحص أعمق قبل التسليم | `src/i18n/ar.json` و`en.json` مفتاح `app.name`، و`index.html` `<title>` |
 | 2 | الخيط القصصي | بلا قصة. الحقل `arc?` في `Case` فارغ ولا يُقرأ | `src/engine/types.ts` و`src/content/cases/*.ts` |
 | 3 | القسم والعمر | غير محدد. **تحقق من الموقع الرسمي [مؤكد]:** Junior 13–15 وSenior 16–18 بتاريخ 1 أغسطس 2027، بعمر أكبر عضوة. Senior يسلّم Business Canvas بدل User Adoption Plan | `docs/research-technovation.md` |
 | 4 | المستخدم الأساسي | طالبات الثانوية وعائلاتهن (افتراض الخطة). فئات السن في وضع المختبِر: 13–15، 16–18، 19+ | `src/store/gameStore.ts` نوع `AgeBand` |

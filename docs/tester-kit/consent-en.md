@@ -2,7 +2,7 @@
 
 > The same text appears inside the game on the consent screen (tester mode, English UI). This copy is for anyone who wants a written record, and for a parent/guardian when needed.
 
-## Consent to take part in testing "Message Detective"
+## Consent to take part in testing "Real or Ruse?"
 
 **What is it?** An educational web game that trains people to spot scam messages by investigating, not guessing. It is being developed as a Technovation Girls 2026–2027 project.
 

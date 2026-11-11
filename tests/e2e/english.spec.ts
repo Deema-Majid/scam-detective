@@ -12,7 +12,7 @@ test('?lang=en switches to a left-to-right English UI without serious a11y issue
   await page.goto('/?lang=en');
   await expect(page.locator('html')).toHaveAttribute('dir', 'ltr');
   await expect(page.locator('html')).toHaveAttribute('lang', 'en');
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Message Detective');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Real or Ruse?');
   await page.getByTestId('start-case1').click();
   await expect(page.getByTestId('toast')).toBeVisible({ timeout: 6000 });
   await expect(page.getByTestId('toast')).toContainText('Rafeef Express');
