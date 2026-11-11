@@ -15,6 +15,12 @@ export function TesterCodeScreen() {
   const [code, setCode] = useState('');
   const [age, setAge] = useState<AgeBand | undefined>();
   const valid = isValidTesterCode(code);
+  const showError = code.trim() !== '' && !valid;
+  const next = () => {
+    if (!valid) return;
+    setTester(normalizeTesterCode(code), age);
+    setScreen('consent');
+  };
 
   return (
     <main id="main" className="mx-auto flex min-h-dvh max-w-md flex-col justify-center gap-6 px-4 py-10" data-testid="tester-code-screen">
@@ -23,19 +29,27 @@ export function TesterCodeScreen() {
         <h1 className="text-2xl font-bold">{t('tester.code.title')}</h1>
         <p className="mt-1 text-sm text-fg-muted">{t('tester.code.hint')}</p>
       </div>
-      <label className="grid gap-2">
+      <label className="grid min-w-0 gap-2">
         <span className="text-sm font-medium">{t('tester.code.label')}</span>
         <input
           value={code}
           onChange={(e) => setCode(e.target.value)}
           onBlur={() => setCode(normalizeTesterCode(code))}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') next();
+          }}
+          aria-invalid={showError}
+          aria-describedby="tester-code-error"
           inputMode="numeric"
           dir="ltr"
           placeholder="T-0427"
           autoComplete="off"
-          className="min-h-14 rounded-2xl border border-border bg-surface px-4 text-center text-2xl font-bold tracking-widest text-fg"
+          className="min-h-14 w-full min-w-0 rounded-2xl border border-border bg-surface px-4 text-center text-2xl font-bold tracking-widest text-fg"
           data-testid="tester-code-input"
         />
+        <span id="tester-code-error" role="alert" className="min-h-5 text-sm text-scam" data-testid="tester-code-error">
+          {showError ? t('tester.code.invalid') : ''}
+        </span>
       </label>
       <fieldset>
         <legend className="mb-2 text-sm font-medium">{t('tester.age.label')}</legend>
@@ -66,10 +80,7 @@ export function TesterCodeScreen() {
       <Button
         size="lg"
         disabled={!valid}
-        onClick={() => {
-          setTester(normalizeTesterCode(code), age);
-          setScreen('consent');
-        }}
+        onClick={next}
         data-testid="tester-code-next"
       >
         {t('common.next')}

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { decodeResults, encodeResults, type Results } from '../../src/store/exportResults';
+import { decodeResults, encodeResults, sanitizeFreeText, type Results } from '../../src/store/exportResults';
 import { hashString, seededShuffle } from '../../src/engine/shuffle';
 import { binJudgements, calibrationVerdict } from '../../src/engine/calibration';
 
@@ -57,5 +57,16 @@ describe('calibration', () => {
     expect(calibrationVerdict([{ confidence: 1, correct: false }, { confidence: 1, correct: true }])).toBe('over');
     expect(calibrationVerdict([{ confidence: 0.5, correct: true }, { confidence: 0.5, correct: true }])).toBe('under');
     expect(calibrationVerdict([])).toBeNull();
+  });
+});
+
+describe('sanitizeFreeText', () => {
+  it('replaces emails and long numbers, keeps normal text', () => {
+    expect(sanitizeFreeText('write me at sara@mail.example ok')).toBe('write me at [email] ok');
+    expect(sanitizeFreeText('call 0500000011 now')).toBe('call [number] now');
+    expect(sanitizeFreeText('رقمي ٠٥٠٠٠٠٠٠١١')).toBe('رقمي [number]');
+    expect(sanitizeFreeText('05 0000 0011')).toBe('[number]');
+    expect(sanitizeFreeText('I lost 2,300 riyals in 3 minutes')).toBe('I lost 2,300 riyals in 3 minutes');
+    expect(sanitizeFreeText('ما فهمت الخطوة 4')).toBe('ما فهمت الخطوة 4');
   });
 });

@@ -5,7 +5,7 @@ import { Button } from '@/ui/Button';
 
 const OPEN = ['helped', 'confusing', 'changed'] as const;
 const LIKERT = ['easy', 'tools', 'natural', 'realistic', 'recommend'] as const;
-const MAX = 300;
+const MAX = 500;
 
 /** T6: 3 short open questions + 5 Likert items (design 3.20). The only free text the game stores. */
 export function FeedbackScreen() {
@@ -20,6 +20,9 @@ export function FeedbackScreen() {
     <main id="main" className="mx-auto flex min-h-dvh max-w-md flex-col gap-5 px-4 py-8" data-testid="feedback-screen">
       <h1 className="text-2xl font-bold">{t('feedback.title')}</h1>
       <p className="text-sm text-fg-muted">{t('feedback.note')}</p>
+      <p className="rounded-2xl border border-warn bg-warn-soft px-3 py-2 text-sm font-semibold text-fg" role="note" data-testid="feedback-privacy-warning">
+        {t('feedback.privacyWarn')}
+      </p>
 
       {OPEN.map((k, i) => (
         <label key={k} className="grid gap-1 text-sm">

@@ -31,7 +31,8 @@ export function SummaryScreen() {
 
       <section className="rounded-2xl border border-border bg-surface p-4">
         <h2 className="mb-3 text-lg font-bold">{t('summary.cases')}</h2>
-        <table className="w-full text-sm" data-testid="summary-table">
+        <div className="max-w-full overflow-x-auto" tabIndex={0} role="region" aria-label={t('summary.cases')}>
+        <table className="w-full min-w-[320px] text-sm" data-testid="summary-table">
           <thead>
             <tr className="text-start text-fg-muted">
               <th className="py-1 text-start">{t('summary.col.case')}</th>
@@ -63,6 +64,7 @@ export function SummaryScreen() {
             )}
           </tbody>
         </table>
+        </div>
       </section>
 
       <div className="grid gap-3 sm:grid-cols-2">

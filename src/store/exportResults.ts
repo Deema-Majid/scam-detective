@@ -10,7 +10,7 @@ import type { AgeBand, GameState } from './gameStore';
  * game state into the JSON object; encodeResults() turns that into a short
  * text code "SD1.<base64url of deflate-raw JSON>" (or "SD0.<base64url JSON>"
  * when the browser has no CompressionStream). analysis/analyze.py reads both.
- * No name, email or any personal identifier is ever included.
+ * No name, email or any personal identifier is ever included (free text is scrubbed by sanitizeFreeText).
  */
 
 export type ResultsTestItem = {
@@ -84,6 +84,18 @@ function testSection(session: GameState['pre']): Results['pre'] {
   };
 }
 
+const EMAIL_RE = /[^\s@<>()]+@[^\s@<>()]+\.[^\s@<>()]+/g;
+const LONG_NUMBER_RE = /[0-9٠-٩۰-۹](?:[ .-]?[0-9٠-٩۰-۹]){6,}/g;
+
+/**
+ * Free text is the one place a tester could type something personal.
+ * Emails become [email]; any run of 7+ digits (Latin or Arabic-Indic, with
+ * optional single spaces/dashes between them) becomes [number].
+ */
+export function sanitizeFreeText(text: string): string {
+  return text.replace(EMAIL_RE, '[email]').replace(LONG_NUMBER_RE, '[number]');
+}
+
 export function buildResults(s: StateSlice, opts: { lang: 'ar' | 'en'; gender: 'f' | 'm'; now?: number }): Results {
   const now = opts.now ?? Date.now();
   const cases: ResultsCase[] = [];
@@ -131,7 +143,7 @@ export function buildResults(s: StateSlice, opts: { lang: 'ar' | 'en'; gender: '
   const post = testSection(s.post);
   if (pre) out.pre = pre;
   if (post) out.post = post;
-  if (s.feedback) out.feedback = s.feedback;
+  if (s.feedback) out.feedback = { open: s.feedback.open.map(sanitizeFreeText), likert: s.feedback.likert };
   return out;
 }
 

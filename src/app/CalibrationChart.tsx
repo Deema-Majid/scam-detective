@@ -26,12 +26,15 @@ export function CalibrationChart({ judgements }: { judgements: Judgement[] }) {
   const B = 40;
   const x = (pct: number) => L + ((pct - 50) / 50) * (W - L - R);
   const y = (pct: number) => T + (1 - pct / 100) * (H - T - B);
+  // Point labels sit on the point but are pulled inward near the edges so they are never cut off.
+  const labelAnchor = (px: number) => (px > W - R - 40 ? 'end' : px < L + 40 ? 'start' : 'middle');
+  const labelX = (px: number) => (px > W - R - 40 ? W - R : px < L + 40 ? L + 2 : px);
   const maxN = Math.max(0, ...bins.map((b) => b.n));
   const pts = bins.map((b) => ({ ...b, px: x(b.meanConfidence), py: y(b.accuracy), far: Math.abs(b.meanConfidence - b.accuracy) >= 15 }));
 
   return (
     <figure className="w-full max-w-[360px]" data-testid="calibration-chart">
-      <svg viewBox={`0 0 ${W} ${H}`} className="h-auto w-full" role="img" aria-labelledby={`${id}-title`} aria-describedby={`${id}-table`}>
+      <svg viewBox={`0 0 ${W} ${H}`} className="h-auto w-full" style={{ direction: 'ltr' }} role="img" aria-labelledby={`${id}-title`} aria-describedby={`${id}-table`}>
         <title id={`${id}-title`}>{t('calib.title')}</title>
         {/* axes */}
         <line x1={L} y1={y(0)} x2={W - R} y2={y(0)} stroke="var(--border)" />
@@ -77,9 +80,9 @@ export function CalibrationChart({ judgements }: { judgements: Judgement[] }) {
               <title>{t('calib.point', { conf: Math.round(p.meanConfidence), acc: Math.round(p.accuracy), n: p.n })}</title>
             </circle>
             {(p.far || p.n === maxN) && (
-              <text x={p.px} y={p.meanConfidence > p.accuracy ? p.py - 10 : p.py + 18} textAnchor="middle" fontSize="11" fill="var(--fg)">
+              <text x={labelX(p.px)} y={p.meanConfidence > p.accuracy ? p.py - 10 : p.py + 18} textAnchor={labelAnchor(p.px)} fontSize="11" fill="var(--fg)">
                 {t('calib.pointShort', { conf: Math.round(p.meanConfidence), acc: Math.round(p.accuracy) })}
-                <tspan x={p.px} dy="12" fill="var(--fg-muted)">
+                <tspan x={labelX(p.px)} dy="12" fill="var(--fg-muted)">
                   {t('calib.pointN', { n: p.n })}
                 </tspan>
               </text>
