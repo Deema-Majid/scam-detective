@@ -6,7 +6,7 @@
 
 **What is it?** An educational web game that trains people to spot scam messages by investigating, not guessing. It is being developed as a Technovation Girls 2026–2027 project.
 
-**What will I do?** Answer 6 short messages before playing, play 3 investigation cases, answer 6 messages after playing, then 8 feedback questions. About 20 minutes.
+**What will I do?** Answer 6 short messages before playing, play 4 investigation cases, answer 6 messages after playing, then 8 feedback questions. About 20 minutes.
 
 **What data is collected?**
 - Only my in-game answers (verdict, confidence, choices, timing, and feedback answers).

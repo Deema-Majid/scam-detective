@@ -25,6 +25,7 @@ export function DebriefScreen() {
   const { c, run } = w;
   const verdict = run.verdict;
   if (!verdict) return null;
+  const isLegit = c.truth === 'legit';
   const res = evaluateVerdict(c, verdict);
   const pct = Math.round(verdict.confidence * 100);
   const judgements = allJudgements(state);
@@ -43,11 +44,17 @@ export function DebriefScreen() {
 
   return (
     <div className="flex min-h-0 flex-1 flex-col" data-testid="debrief-screen">
-      <FlowHeader title={t('debrief.title')} step={t('flow.step', { n: 4, total: 4 })} />
+      <FlowHeader title={t(isLegit ? 'debrief.title.legit' : 'debrief.title')} step={t('flow.step', { n: 4, total: 4 })} />
       <div className="phone-scroll flex-1 px-4 py-4" role="region" tabIndex={0} aria-label={t('phone.scrollRegion')}>
         <p className="mb-4 rounded-2xl bg-surface-2 p-3 text-sm leading-relaxed">{t(c.planKey)}</p>
 
-        <h3 className="mb-2 text-sm font-bold text-accent-ink">{t('debrief.techniques')}</h3>
+        {isLegit && (
+          <p className="mb-5 rounded-2xl border border-legit/50 bg-legit-soft p-3 text-sm font-medium" data-testid="legit-note">
+            {t('debrief.legit.note')}
+          </p>
+        )}
+
+        {!isLegit && <h3 className="mb-2 text-sm font-bold text-accent-ink">{t('debrief.techniques')}</h3>}
         <ul className="mb-5 grid gap-2" data-testid="debrief-techniques">
           {c.techniques.map((tech) => {
             const hits = (state.techniqueMap[tech] ?? []).filter((h) => h.caseId === c.id);
@@ -67,10 +74,10 @@ export function DebriefScreen() {
 
         {misleading.length > 0 && (
           <div className="mb-5 rounded-2xl border border-warn/50 bg-warn-soft p-3" data-testid="misleading-reveal">
-            <div className="mb-1 text-xs font-bold text-warn">{t('debrief.misleading')}</div>
+            <div className="mb-1 text-xs font-bold text-warn">{t(isLegit ? 'debrief.misleading.legit' : 'debrief.misleading')}</div>
             {misleading.map((e) => (
               <p key={e.id} className="text-sm">
-                <span className="font-semibold">{t(e.titleKey)}</span> — {t('debrief.misleading.why')}
+                <span className="font-semibold">{t(e.titleKey)}</span> — {t(isLegit ? 'debrief.misleading.why.legit' : 'debrief.misleading.why')}
               </p>
             ))}
           </div>

@@ -106,7 +106,7 @@ export function OutcomeScreen() {
           {!altUnlocked && <span className="text-xs text-fg-muted"> · {t('outcome.whatIfSoon')}</span>}
         </Button>
         <Button onClick={goToDebrief} data-testid="to-debrief">
-          {t('outcome.continue')}
+          {t(c.truth === 'legit' ? 'outcome.continue.legit' : 'outcome.continue')}
         </Button>
       </div>
     </div>
