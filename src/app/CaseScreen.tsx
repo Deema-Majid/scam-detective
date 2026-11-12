@@ -53,10 +53,10 @@ export function CaseScreen() {
   const caseIndex = caseOrder.indexOf(w.c.id);
 
   return (
-    <main id="main" data-case={w.c.id} className="relative flex min-h-dvh flex-col items-center justify-center gap-6 sm:py-4">
+    <main id="main" data-case={w.c.id} className="relative flex min-h-dvh flex-col items-center justify-center gap-6 frame:py-4">
       <h1 className="sr-only">{t(w.c.titleKey)}</h1>
       {mode === 'family' && (
-        <Button variant="secondary" size="sm" className="fixed end-2 top-1 z-40 !min-h-9 sm:hidden" onClick={exitFamily} data-testid="family-exit-mobile">
+        <Button variant="secondary" size="sm" className="fixed end-2 top-1 z-40 !min-h-9 frame:hidden" onClick={exitFamily} data-testid="family-exit-mobile">
           {t('family.exit')}
         </Button>
       )}
@@ -71,7 +71,7 @@ export function CaseScreen() {
         )}
         <PhoneScreen />
       </PhoneFrame>
-      <p className="hidden max-w-sm text-center text-sm text-fg-muted sm:block">{t('case.investigate')}</p>
+      <p className="hidden max-w-sm text-center text-sm text-fg-muted frame:block">{t('case.investigate')}</p>
     </main>
   );
 }
@@ -114,7 +114,7 @@ function CaseIntroCard() {
   const exitFamily = useGame((s) => s.exitFamily);
   if (!w) return null;
   return (
-    <div className="hidden w-[390px] items-center justify-between gap-3 rounded-2xl border border-border bg-surface px-4 py-3 sm:flex" data-testid="case-context">
+    <div className="hidden w-[390px] items-center justify-between gap-3 rounded-2xl border border-border bg-surface px-4 py-3 frame:flex" data-testid="case-context">
       <div className="min-w-0">
         <div className="text-xs text-fg-muted">{t(w.c.setupKey)}</div>
         <div className="truncate text-base font-bold">{t(w.c.titleKey)}</div>

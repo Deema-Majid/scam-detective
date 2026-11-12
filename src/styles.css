@@ -72,6 +72,9 @@
   color-scheme: light;
 }
 
+/* Framed phone on desktop-like windows only; short or narrow windows (phones, landscape phones) get the full-screen phone. */
+@custom-variant frame (@media (min-width: 640px) and (min-height: 620px));
+
 @theme inline {
   --color-bg: var(--bg);
   --color-bg-elev: var(--bg-elev);

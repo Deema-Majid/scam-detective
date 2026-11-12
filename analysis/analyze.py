@@ -127,6 +127,11 @@ def paired_test(df: pd.DataFrame, metric: str) -> dict:
         res["note"] = f"insufficient data (n={n} < {MIN_PAIRS})"
         return res
     diff = d[b] - d[a]
+    rng = np.random.default_rng(0)
+    boots = [rng.choice(diff.to_numpy(), size=n, replace=True).mean() for _ in range(5000)]
+    res["ci"] = (float(np.percentile(boots, 2.5)), float(np.percentile(boots, 97.5)))
+    if n < 6:
+        res["note"] = f"n={n}: with fewer than 6 testers an exact Wilcoxon test can never reach p<0.05 (best possible 0.0625); read the confidence interval"
     if (diff == 0).all():
         res["note"] = "no change"
         res["p"] = 1.0
@@ -202,12 +207,17 @@ def write_summary(df: pd.DataFrame, out: Path, n_total: int, n_synth: int, n_dup
         lines += [f"> **{n_synth} of {n_total} records are synthetic sample data, not real testers.** Do not report these numbers.", ""]
     lines += [f"{n_dupes} duplicate records removed.", ""]
     lines += [f"Testers read: **{n_total}**. Testers with both tests complete: **{int(df[['pre_accuracy', 'post_accuracy']].dropna().shape[0]) if {'pre_accuracy', 'post_accuracy'} <= set(df.columns) else 0}**.", ""]
-    lines += ["| Metric | n (paired) | Before | After | Change | Wilcoxon signed-rank p |", "|---|---|---|---|---|---|"]
+    lines += ["| Metric | n (paired) | Before | After | Change | 95% CI of change (bootstrap) | Wilcoxon signed-rank p |", "|---|---|---|---|---|---|---|"]
     for m, label in [("accuracy", "Accuracy"), ("brier", "Brier score (lower is better)"), ("other_channel", "Chose 'another channel' first"), ("acc_polished", "Accuracy, polished messages"), ("acc_sloppy", "Accuracy, sloppy messages")]:
         r = paired_test(df, m)
         change = r["post"] - r["pre"] if r["n"] else np.nan
-        lines.append(f"| {label} | {r['n']} | {r['pre']:.2f} | {r['post']:.2f} | {change:+.2f} | {fmt_p(r)} |")
-    lines += ["", f"A statistic is reported only with at least {MIN_PAIRS} paired testers. If there is no improvement, report it as it is and describe what was changed after the round."]
+        ci = f"[{r['ci'][0]:+.2f}, {r['ci'][1]:+.2f}]" if r.get("ci") else "n/a"
+        lines.append(f"| {label} | {r['n']} | {r['pre']:.2f} | {r['post']:.2f} | {change:+.2f} | {ci} | {fmt_p(r)} |")
+    lines += [
+        "",
+        f"A test statistic is reported only with at least {MIN_PAIRS} paired testers. An exact Wilcoxon test needs n >= 6 to be able to reach p < 0.05, so in small rounds rely on the confidence interval and describe the direction, not significance.",
+        "Each test has only 6 items, so individual scores move in steps of 0.17; expect wide intervals. If there is no improvement, report it as it is and describe what was changed after the round.",
+    ]
     out.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
